@@ -73,4 +73,42 @@ contract("AvilaToken", function(accounts){
     });
   });
 
+  it('handles delegated transfer', function(){
+    return AvilaToken.deployed().then(function(instance){
+      tokenInstance = instance;
+      fromAccount = accounts[2];
+      toAccount = accounts[3];
+      spendingAccount = accounts[4];
+      return tokenInstance.transfer(fromAccount, 100, {from: accounts[0]});
+    }).then(function(receipt){
+      return tokenInstance.approve(spendingAccount, 10, {from: fromAccount});
+    }).then(function(){
+      return tokenInstance.transferFrom(fromAccount, toAccount, 1000, {from: spendingAccount});
+    }).then(assert.fail).catch(function(error){
+      assert(error.message.indexOf('revert')>= 0, 'cannot transfer value larger than balance');
+      return tokenInstance.transferFrom(fromAccount, toAccount, 20, {from: spendingAccount});
+    }).then(assert.fail).catch(function(error){
+      assert(error.message.indexOf('revert')>= 0, 'cannot transfer value larger than approve ammount');
+      return tokenInstance.transferFrom.call(fromAccount, toAccount, 10, {from: spendingAccount});
+    }).then(function(success){
+      assert.equal(success, true);
+      return tokenInstance.transferFrom(fromAccount, toAccount, 10, {from: spendingAccount});
+    }).then(function(receipt){
+      assert.equal(receipt.logs.length, 1, 'triggers one event');
+      assert.equal(receipt.logs[0].event, 'Transfer', 'should be the Transfer event');
+      assert.equal(receipt.logs[0].args._from, fromAccount, 'logs the account the tokens are authorized by');
+      assert.equal(receipt.logs[0].args._to, toAccount, 'logs the account the tokens are authorized to');
+      assert.equal(receipt.logs[0].args._value, 10, 'logs the transfer ammount');
+      return tokenInstance.balanceOf(fromAccount);
+    }).then(function(balance){
+      assert.equal(balance.toNumber(), 90, 'deducts the ammount from the sending account');
+      return tokenInstance.balanceOf(toAccount);
+    }).then(function(balance){
+      assert.equal(balance.toNumber(), 10, 'adds the ammount from the receiving account');
+      return tokenInstance.allowance(fromAccount, spendingAccount);
+    }).then(function(allowance){
+      assert.equal(allowance.toNumber(), 0, 'deducts the ammount from the allowance');
+    });
+  });
+
 });
