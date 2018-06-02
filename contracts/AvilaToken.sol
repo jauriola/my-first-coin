@@ -31,7 +31,7 @@ contract AvilaToken {
     balanceOf[_to] += _value;
 
     // Transfer event
-    Transfer(msg.sender, _to, _value);
+    emit Transfer(msg.sender, _to, _value);
     // Return a boolean
     return true;
   }
@@ -41,7 +41,7 @@ contract AvilaToken {
     // Allowance
     allowance[msg.sender][_spender] = _value;
     // Aprove event
-    Approval(msg.sender, _spender, _value);
+    emit Approval(msg.sender, _spender, _value);
     return true;
   }
 
@@ -52,7 +52,7 @@ contract AvilaToken {
     balanceOf[_from] -= _value;
     balanceOf[_to] += _value;
     allowance[_from][msg.sender] -= _value;
-    Transfer(_from, _to, _value);
+    emit Transfer(_from, _to, _value);
 
     return true;
   }
