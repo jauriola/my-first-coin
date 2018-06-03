@@ -25,10 +25,10 @@
           </p>
           <br/>
 
-          <form role="form" class="">
+          <form onSubmit="App.buyTokens(); return false;" role="form" class="">
             <div class="form-group">
               <div class="input-group">
-                <input id="numberOfToken" class="form-control input-lg" type="number" name="number" value="1" min="1" pattern="[0-9]"></input>
+                <input id="numberOfToken" class="form-control input-lg" type="number" name="number" value="1" min="1" pattern="[0-9]">
                 <span class="input-group-btn">
                   <button type="submit" class="btn btn-primary btn-lg">Buy tokens!</button>
                 </span>

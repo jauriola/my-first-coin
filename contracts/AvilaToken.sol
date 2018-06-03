@@ -8,7 +8,7 @@ contract AvilaToken {
   string public symbol = "AVL";
   string public standard = "Avila Token v1.0"; // It is not part of the ERC20 standard
   uint256 public totalSupply;
-  uint8 public constant decimals = 18;
+  //uint8 public constant decimals = 18;
 
   event Transfer(address indexed _from, address indexed _to, uint256 _value);
   event Approval(address indexed _owner,address indexed _spender, uint256 _value);
